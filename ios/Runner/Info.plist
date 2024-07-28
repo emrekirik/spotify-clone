@@ -46,14 +46,23 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>CFBundleURLTypes</key>
-<array>
-  <dict>
-    <key>CFBundleURLSchemes</key>
-    <array>
-      <string>spotifyclone</string>
-    </array>
-  </dict>
-</array>
+	<array>
+	  <dict>
+	    <key>CFBundleURLSchemes</key>
+	    <array>
+	      <string>spotifyclone</string>
+	    </array>
+	  </dict>
+	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>GoogleAppID</key>
+	<string>1:1028898398223:ios:ad955fb3be0604fec7037a</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1028898398223</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDatGYoy08ysuGjtJNOE9u8B6v679vsw0Y</string>
+	<key>PROJECT_ID</key>
+	<string>spotifyclone-c0f1d</string>
 </dict>
 </plist>
-

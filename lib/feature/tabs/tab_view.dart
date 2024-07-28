@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:spotifyclone_app/feature/tabs/player_provider.dart';
+import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color.dart';
 import 'package:spotifyclone_app/feature/home/home_view.dart';
 import 'package:spotifyclone_app/feature/library/library.dart';

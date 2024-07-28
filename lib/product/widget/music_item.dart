@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spotifyclone_app/feature/tabs/player_provider.dart';
+import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 
 class MusicItem extends ConsumerWidget {
   final String musicTitle;

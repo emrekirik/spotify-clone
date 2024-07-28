@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spotifyclone_app/feature/home/home_provider.dart';
-import 'package:spotifyclone_app/feature/library/library_provider.dart';
+import 'package:spotifyclone_app/feature/home/home_notifier.dart';
+import 'package:spotifyclone_app/feature/library/library_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color.dart';
-import 'package:spotifyclone_app/feature/tabs/player_provider.dart';
+import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/widget/custom_appbar.dart';
-
 
 class HomeView extends ConsumerStatefulWidget {
   final Function(String, bool) onPlaylistSelected;
@@ -24,11 +23,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     super.initState();
-    final homeNotifier = ref.read(homeProvider.notifier);
-    final libraryNotifier = ref.read(libraryProvider.notifier);
-    homeNotifier.fetchFeaturedPlaylists();
-    homeNotifier.fetchMusic();
-    libraryNotifier.fetchPlaylists();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final homeNotifier = ref.read(homeProvider.notifier);
+      final libraryNotifier = ref.read(libraryProvider.notifier);
+      homeNotifier.fetchFeaturedPlaylists();
+      homeNotifier.fetchMusic();
+      libraryNotifier.fetchPlaylists();
+    });
   }
 
   @override
@@ -38,23 +39,25 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     return Scaffold(
       body: SafeArea(
-        child: Stack(children: [
-          Container(
-            color: HexColor(backgroundColor),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  CustomAppbar(
-                    message: _title,
-                  ),
-                  createGrid(libraryState.playlists),
-                  createMusicList('Senin İçin', homeState.musicList),
-                  createPlaylist('Popüler Çalma Listeleri', homeState.playlist),
-                ],
+        child: Stack(
+          children: [
+            Container(
+              color: HexColor(backgroundColor),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    CustomAppbar(
+                      message: _title,
+                    ),
+                    createGrid(libraryState.playlists),
+                    createMusicList('Senin İçin', homeState.musicList),
+                    createPlaylist('Popüler Çalma Listeleri', homeState.playlist),
+                  ],
+                ),
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }
@@ -69,26 +72,25 @@ class _HomeViewState extends ConsumerState<HomeView> {
             height: 180,
             width: 180,
             child: InkWell(
-                onTap: () {
-                  widget.onPlaylistSelected(playlist['id'], false);
-                },
-                child: playlist.containsKey('images') &&
-                        playlist['images'].isNotEmpty
-                    ? Image.network(
-                        playlist['images'][0]['url'],
-                        fit: BoxFit.cover,
-                      )
-                    : playlist.containsKey('imageUrl') &&
-                            playlist['imageUrl'].isNotEmpty
-                        ? Image.network(
-                            playlist['imageUrl'],
-                            fit: BoxFit.cover,
-                          )
-                        : const Icon(
-                            Icons.music_note,
-                            size: 30,
-                            color: Colors.white,
-                          )),
+              onTap: () {
+                widget.onPlaylistSelected(playlist['id'], false);
+              },
+              child: playlist.containsKey('images') && playlist['images'].isNotEmpty
+                  ? Image.network(
+                      playlist['images'][0]['url'],
+                      fit: BoxFit.cover,
+                    )
+                  : playlist.containsKey('imageUrl') && playlist['imageUrl'].isNotEmpty
+                      ? Image.network(
+                          playlist['imageUrl'],
+                          fit: BoxFit.cover,
+                        )
+                      : const Icon(
+                          Icons.music_note,
+                          size: 30,
+                          color: Colors.white,
+                        ),
+            ),
           ),
           Text(
             playlist['name'] ?? 'Unnamed Playlist',
@@ -114,14 +116,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
         },
         child: Container(
           decoration: BoxDecoration(
-              color: Colors.grey[850], borderRadius: BorderRadius.circular(6)),
+            color: Colors.grey[850],
+            borderRadius: BorderRadius.circular(6),
+          ),
           child: Row(
             children: [
               SizedBox(
                 height: 60,
                 width: 60,
-                child: playlist.containsKey('imageUrl') &&
-                        playlist['imageUrl'].isNotEmpty
+                child: playlist.containsKey('imageUrl') && playlist['imageUrl'].isNotEmpty
                     ? Image.network(
                         playlist['imageUrl'],
                         fit: BoxFit.cover,
@@ -132,19 +135,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         color: Colors.white,
                       ),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   playlist['name'] ?? 'Unnamed Playlist',
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -153,15 +155,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   List<Widget> createListOfPlaylists(List<dynamic> playlist) {
-    List<Widget> playlists =
-        playlist.map((playlist) => createPlaylistItem(playlist)).toList();
-    return playlists;
+    return playlist.map((playlist) => createPlaylistItem(playlist)).toList();
   }
 
   List<Widget> createUserListOfPlaylists(List<dynamic> userPlaylist) {
-    return userPlaylist
-        .map((playlist) => createPlaylistItem(playlist))
-        .toList();
+    return userPlaylist.map((playlist) => createUserPlaylistItem(playlist)).toList();
   }
 
   Widget createMusic(dynamic music) {
@@ -190,7 +188,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           Text(
             music['track']['artists'][0]['name'],
             style: const TextStyle(color: Colors.white),
-          )
+          ),
         ],
       ),
     );
@@ -205,7 +203,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
           Text(
             label,
             style: const TextStyle(
-                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           SizedBox(
             height: 300,
@@ -216,7 +217,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
               },
               itemCount: musicList.length < 10 ? musicList.length : 10,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -231,7 +232,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
           Text(
             label,
             style: const TextStyle(
-                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           SizedBox(
             height: 300,
@@ -242,7 +246,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
               },
               itemCount: playlist.length < 10 ? playlist.length : 10,
             ),
-          )
+          ),
         ],
       ),
     );
