@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDatGYoy08ysuGjtJNOE9u8B6v679vsw0Y</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -13,16 +17,35 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>spotifyclone_app</string>
+	<string>Spotify Clone</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>spotifyclone</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>GCM_SENDER_ID</key>
+	<string>1028898398223</string>
+	<key>GoogleAppID</key>
+	<string>1:1028898398223:ios:ad955fb3be0604fec7037a</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>PROJECT_ID</key>
+	<string>spotifyclone-c0f1d</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -41,28 +64,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>CFBundleURLTypes</key>
-	<array>
-	  <dict>
-	    <key>CFBundleURLSchemes</key>
-	    <array>
-	      <string>spotifyclone</string>
-	    </array>
-	  </dict>
-	</array>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
-	<key>GoogleAppID</key>
-	<string>1:1028898398223:ios:ad955fb3be0604fec7037a</string>
-	<key>GCM_SENDER_ID</key>
-	<string>1028898398223</string>
-	<key>API_KEY</key>
-	<string>AIzaSyDatGYoy08ysuGjtJNOE9u8B6v679vsw0Y</string>
-	<key>PROJECT_ID</key>
-	<string>spotifyclone-c0f1d</string>
-</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Bu uygulama, sesli arama yapabilmek için mikrofon erişimine ihtiyaç duyar.</string>
+	</dict>
 </plist>

@@ -4,7 +4,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spotifyclone_app/feature/home/home_notifier.dart';
 import 'package:spotifyclone_app/feature/library/library_notifier.dart';
-import 'package:spotifyclone_app/product/constants/color.dart';
+import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/widget/custom_appbar.dart';
 
