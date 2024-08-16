@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spotifyclone_app/product/constants/config.dart';
 import 'package:spotifyclone_app/product/models/category.dart';
@@ -31,8 +30,6 @@ class SearchState {
 }
 
 class SearchNotifier extends StateNotifier<SearchState> {
-  final TextEditingController searchController = TextEditingController();
-
   SearchNotifier()
       : super(SearchState(
           categories: [],
@@ -64,16 +61,15 @@ class SearchNotifier extends StateNotifier<SearchState> {
     }
   }
 
-  void checkSearchText() {
-    if (searchController.text.isEmpty) {
+  void checkSearchText(String text) {
+    if (text.isEmpty) {
       state = state.copyWith(isSearching: false);
     } else {
-      searchMusic();
+      searchMusic(text);
     }
   }
 
-  Future<void> searchMusic() async {
-    final searchText = searchController.text;
+  Future<void> searchMusic(String searchText) async {
     final encodedSearchText = Uri.encodeQueryComponent(searchText);
     final accessToken = await TokenManager().getAccessToken();
     final searchUrl =
@@ -96,12 +92,6 @@ class SearchNotifier extends StateNotifier<SearchState> {
     } else {
       print('Failed to search music: ${searchResponse.statusCode}');
     }
-  }
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
   }
 }
 

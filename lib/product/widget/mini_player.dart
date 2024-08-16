@@ -5,7 +5,6 @@ import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/feature/tabs/music_page.dart';
 
-
 class MiniPlayer extends ConsumerWidget {
   const MiniPlayer({
     required this.music,
@@ -26,11 +25,7 @@ class MiniPlayer extends ConsumerWidget {
         ? const SizedBox()
         : GestureDetector(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MusicPage(
-                  music: music,
-                ),
-              ));
+              Navigator.of(context).push(musicPageRoute(music));
             },
             child: AnimatedContainer(
               decoration: BoxDecoration(
@@ -97,4 +92,26 @@ class MiniPlayer extends ConsumerWidget {
             ),
           );
   }
+}
+
+PageRouteBuilder musicPageRoute(dynamic music) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => MusicPage(
+      music: music,
+    ),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.easeInOut;
+
+      var tween = Tween(begin: begin, end: end);
+      var curvedAnimation = CurvedAnimation(
+        parent: animation,
+        curve: curve,
+      );
+      var offsetAnimation = tween.animate(curvedAnimation);
+
+      return SlideTransition(position: offsetAnimation, child: child);
+    },
+  );
 }

@@ -66,5 +66,10 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Bu uygulama, sesli arama yapabilmek için mikrofon erişimine ihtiyaç duyar.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+<string>Fotoğraf galerisine erişmek için izin gerekiyor.</string>
+<key>NSCameraUsageDescription</key>
+<string>Kamera erişimi için izin gerekiyor.</string>
 	</dict>
+
 </plist>

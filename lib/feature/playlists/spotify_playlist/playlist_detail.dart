@@ -7,10 +7,11 @@ import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/product/widget/music_item.dart';
 
 class PlaylistDetail extends ConsumerStatefulWidget {
-  final String playlistId;
   final VoidCallback onBack;
+  final String playlistId;
+
   const PlaylistDetail(
-      {required this.playlistId, required this.onBack, super.key});
+      {required this.onBack, required this.playlistId, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PlaylistDetailState();
@@ -50,7 +51,7 @@ class _PlaylistDetailState extends ConsumerState<PlaylistDetail> {
         backgroundColor: HexColor(backgroundColor),
         leading: IconButton(
           onPressed: widget.onBack,
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           color: Colors.white,
         ),
       ),

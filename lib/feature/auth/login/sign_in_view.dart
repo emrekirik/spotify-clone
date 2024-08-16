@@ -3,14 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:spotifyclone_app/feature/auth/login/sign_in_notifier.dart';
+import 'package:spotifyclone_app/feature/auth/signUp/sign_up_view.dart';
+import 'package:spotifyclone_app/feature/tabs/tab_view.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/product/constants/string_constants.dart';
 
 class SignInView extends ConsumerWidget {
-  const SignInView({super.key});
+  SignInView({super.key});
+
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final signInNotifier = ref.watch(signInProvider.notifier);
+    final isObscured =
+        ref.watch(signInProvider.select((state) => state.isObscured));
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -18,13 +28,13 @@ class SignInView extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 100),
+              padding: const EdgeInsets.only(top: 100),
               child: Image.asset(
                 'assets/icon/app_icon.png',
                 height: 40,
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 20, bottom: 37),
               child: Text(
                 "Spotify'da oturum aç",
@@ -46,30 +56,31 @@ class SignInView extends ConsumerWidget {
               icon: FontAwesomeIcons.apple,
               onPressed: () {},
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
-            Divider(
+            const Divider(
               indent: 25,
               endIndent: 25,
             ),
-            SizedBox(
+            const SizedBox(
               height: 40,
             ),
             Container(
               alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(left: 30, right: 30),
+              padding: const EdgeInsets.only(left: 30, right: 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10),
                     child: Text(
                       StringConstants.textFieldHintTitleMail,
                       style: TextStyle(fontSize: 17),
                     ),
                   ),
                   TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       hintText: StringConstants.textFieldHintTitleMail,
                       border: OutlineInputBorder(
@@ -79,18 +90,26 @@ class SignInView extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10, top: 20),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10, top: 20),
                     child: Text(
-                      StringConstants.textFieldHintTitlePassword,
+                      StringConstants.titlePassword,
                       style: TextStyle(fontSize: 17),
                     ),
                   ),
                   TextField(
+                    obscureText: isObscured,
+                    controller: passwordController,
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
-                          onPressed: () {}, icon: Icon(Icons.visibility_off)),
-                      hintText: StringConstants.textFieldHintTitlePassword,
+                        icon: Icon(
+                          isObscured ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          signInNotifier.toggleObscureText();
+                        },
+                      ),
+                      hintText: StringConstants.titlePassword,
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: HexColor(whiteColor),
@@ -106,8 +125,24 @@ class SignInView extends ConsumerWidget {
                         child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                                 backgroundColor: HexColor(spotifyGreenColor),
-                                padding: EdgeInsets.symmetric(vertical: 18)),
-                            onPressed: () {},
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 18)),
+                            onPressed: () async {
+                              final message = await signInNotifier.login(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                              if (message!.contains('Success')) {
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) => const TabView()));
+                              }
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(message),
+                                ),
+                              );
+                            },
                             child: Text(
                               StringConstants.signInButtonTitle,
                               style: TextStyle(
@@ -125,10 +160,16 @@ class SignInView extends ConsumerWidget {
                       title: StringConstants.dontYouHaveAnAccount,
                       isOppacity: true),
                   _CustomText(
-                      isUnderlined: true,
-                      title: StringConstants.signUpForSpotify,
-                      isOppacity: false),
-                  SizedBox(
+                    isUnderlined: true,
+                    title: StringConstants.signUpForSpotify,
+                    isOppacity: false,
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SignUpView(),
+                      ));
+                    },
+                  ),
+                  const SizedBox(
                     height: 140,
                   )
                 ],
@@ -140,24 +181,28 @@ class SignInView extends ConsumerWidget {
     );
   }
 
-  Padding _CustomText(
-      {required bool isUnderlined,
-      required String title,
-      required bool isOppacity}) {
+  Padding _CustomText({
+    required bool isUnderlined,
+    required String title,
+    required bool isOppacity,
+    VoidCallback?
+        onTap, // Tıklanma özelliği eklemek için bir callback fonksiyonu
+  }) {
     return Padding(
-      padding: EdgeInsets.only(top: 40),
+      padding: const EdgeInsets.only(top: 40),
       child: Center(
         child: RichText(
           text: TextSpan(
             text: title,
             style: TextStyle(
-                fontSize: 18,
-                color:
-                    isOppacity ? Colors.white.withOpacity(0.6) : Colors.white,
-                decoration: isUnderlined
-                    ? TextDecoration.underline
-                    : TextDecoration.none),
-            recognizer: TapGestureRecognizer()..onTap = () {},
+              fontSize: 18,
+              color: isOppacity ? Colors.white.withOpacity(0.6) : Colors.white,
+              decoration:
+                  isUnderlined ? TextDecoration.underline : TextDecoration.none,
+            ),
+            recognizer: isUnderlined && onTap != null
+                ? (TapGestureRecognizer()..onTap = onTap)
+                : null, // Eğer altı çizili ve onTap varsa, tıklanabilir yap
           ),
         ),
       ),
@@ -182,7 +227,7 @@ class _SignInCustomButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -194,7 +239,7 @@ class _SignInCustomButton extends StatelessWidget {
               child: Center(
                 child: Text(
                   title,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
             ),

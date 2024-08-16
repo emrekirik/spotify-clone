@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spotifyclone_app/feature/library/library_notifier.dart';
-import 'package:spotifyclone_app/product/widget/custom_appbar.dart';
+
 
 class LibraryScreen extends ConsumerStatefulWidget {
   final Function(String, bool) onPlaylistSelected;
-  const LibraryScreen({super.key, required this.onPlaylistSelected});
+  const LibraryScreen({required this.onPlaylistSelected, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _LibraryScreenState();
 }
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
-  final String _title = 'Kitaplığın';
-
   @override
   void initState() {
     super.initState();
@@ -25,22 +23,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final libraryState = ref.watch(libraryProvider);
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: CustomAppbar(
-          message: _title,
-        ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: libraryState.playlists.length,
+        itemBuilder: (context, index) {
+          final playlist = libraryState.playlists[index];
+          return buildPlaylistItem(playlist);
+        },
       ),
-      body: libraryState.playlists.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: libraryState.playlists.length,
-              itemBuilder: (context, index) {
-                final playlist = libraryState.playlists[index];
-                return buildPlaylistItem(playlist);
-              },
-            ),
     );
   }
 

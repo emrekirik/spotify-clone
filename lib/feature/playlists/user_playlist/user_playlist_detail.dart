@@ -5,12 +5,14 @@ import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/product/widget/music_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserPlaylistDetail extends ConsumerStatefulWidget {
-  final String playlistId;
   final VoidCallback onBack;
+  final String playlistId;
+
   const UserPlaylistDetail(
-      {required this.playlistId, required this.onBack, super.key});
+      {required this.onBack, required this.playlistId, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -28,18 +30,30 @@ class _UserPlaylistDetailState extends ConsumerState<UserPlaylistDetail> {
   }
 
   Future<void> fetchPlaylistDetails() async {
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-        .collection('playlists')
-        .doc(widget.playlistId)
-        .get();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('User not logged in');
+      return;
+    }
 
-    if (snapshot.exists) {
-      setState(() {
-        _playlist = snapshot.data() as Map<String, dynamic>?;
-        _tracks = _playlist?['songs'] ?? [];
-      });
-    } else {
-      print('Playlist not found');
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('playlists')
+          .doc(widget.playlistId)
+          .get();
+
+      if (snapshot.exists) {
+        setState(() {
+          _playlist = snapshot.data() as Map<String, dynamic>?;
+          _tracks = _playlist?['songs'] ?? [];
+        });
+      } else {
+        print('Playlist not found');
+      }
+    } catch (e) {
+      print('Failed to fetch playlist details: $e');
     }
   }
 
@@ -59,7 +73,7 @@ class _UserPlaylistDetailState extends ConsumerState<UserPlaylistDetail> {
         backgroundColor: HexColor(backgroundColor),
         leading: IconButton(
           onPressed: widget.onBack,
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           color: Colors.white,
         ),
       ),

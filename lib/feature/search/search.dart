@@ -14,32 +14,34 @@ class SearchScreen extends ConsumerStatefulWidget {
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
-  final String _title = 'Ara';
+  late TextEditingController searchController;
 
   @override
   void initState() {
     super.initState();
-    final searchNotifier = ref.read(searchProvider.notifier);
-    searchNotifier.fetchCategories();
-    searchNotifier.searchController.addListener(searchNotifier.checkSearchText);
+    searchController = TextEditingController();
+    searchController.addListener(() {
+      final text = searchController.text;
+      ref.read(searchProvider.notifier).checkSearchText(text);
+    });
+    ref.read(searchProvider.notifier).fetchCategories();
   }
 
   @override
   void dispose() {
-    final searchNotifier = ref.read(searchProvider.notifier);
-    searchNotifier.searchController
-        .removeListener(searchNotifier.checkSearchText);
-    searchNotifier.searchController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchProvider);
-    final searchNotifier = ref.read(searchProvider.notifier);
 
     return Scaffold(
-      appBar: appBar(searchState, searchNotifier),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(65),
+        child: _SearchBar(searchController: searchController, ref: ref),
+      ),
       body: Stack(
         children: [
           searchState.isSearching
@@ -90,6 +92,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
+  List<Widget> createListOfCategories(SearchState searchState) {
+    return searchState.categories
+        .map((Category category) => buildGridTile(category))
+        .toList();
+  }
+
   Widget buildGridTile(Category category) {
     return GridTile(
       child: Container(
@@ -119,66 +127,51 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       ),
     );
   }
+}
 
-  List<Widget> createListOfCategories(SearchState searchState) {
-    return searchState.categories
-        .map((Category category) => buildGridTile(category))
-        .toList();
-  }
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({
+    required this.searchController,
+    required this.ref,
+  });
 
-  PreferredSizeWidget appBar(SearchState searchState, SearchNotifier searchNotifier) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(120),
-      child: AppBar(
-        backgroundColor: HexColor(backgroundColor),
-        flexibleSpace: Padding(
-          padding: const EdgeInsets.only(top: 50),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  _title,
-                  style: const TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: TextField(
-                  controller: searchNotifier.searchController,
-                  onTap: () {
-                    searchState.isSearching;
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Ne dinlemek istiyorsun',
-                    hintStyle: const TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                    fillColor: Colors.grey[200],
-                    filled: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                  ),
-                  style: const TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: IconButton(
-              onPressed: searchNotifier.searchMusic,
-              icon: const Icon(Icons.search),
-              color: Colors.white,
+  final TextEditingController searchController;
+  final WidgetRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: HexColor(backgroundColor),
+      flexibleSpace: Padding(
+        padding: const EdgeInsets.all(8),
+        child: TextField(
+          controller: searchController,
+          decoration: InputDecoration(
+            hintText: 'Ne dinlemek istiyorsun',
+            hintStyle: const TextStyle(color: Colors.black),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
             ),
-          )
-        ],
+            fillColor: Colors.grey[200],
+            filled: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+          ),
+          style: const TextStyle(color: Colors.black),
+        ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            ref
+                .read(searchProvider.notifier)
+                .searchMusic(searchController.text);
+          },
+          icon: const Icon(Icons.search),
+          color: Colors.black,
+        ),
+      ],
     );
   }
 }

@@ -41,12 +41,12 @@ class _PlaylistAddBottomSheetState
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     const Text(
                       'Çalma listesine ekle',
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     TextButton(
                       onPressed: () {
                         if (_selectedPlaylistIndex != null) {

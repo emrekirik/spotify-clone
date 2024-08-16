@@ -5,7 +5,6 @@ import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/widget/playlist_add_bottom_sheet.dart';
 
-
 class MusicPage extends ConsumerWidget {
   final dynamic music;
 
@@ -22,7 +21,11 @@ class MusicPage extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_downward, color: Colors.white),
+          icon: Image.asset(
+            'assets/icon/down-arrow.png',
+            color: Colors.white,
+            height: 30,
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -35,7 +38,7 @@ class MusicPage extends ConsumerWidget {
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(
-              Icons.more_vert,
+              Icons.more_horiz,
               color: Colors.white,
             ),
             onSelected: (String result) {

@@ -72,11 +72,22 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
       duration: state.duration,
     );
   }
+  Future<void> stopMusic() async {
+  await _player.stop();
+  state = PlayerState(
+    isPlaying: false,
+    currentTrack: null,
+    currentPosition: Duration.zero,
+    duration: Duration.zero,
+  );
+}
 
   @override
   void dispose() {
+    _player.stop();
     _player.dispose();
     super.dispose();
+    
   }
 
   Future<void> seek(Duration position) async {
@@ -89,6 +100,8 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
     );
   }
 }
+
+
 
 // Creating a provider for PlayerNotifier
 final playerProvider = StateNotifierProvider<PlayerNotifier, PlayerState>((ref) {

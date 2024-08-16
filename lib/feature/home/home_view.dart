@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spotifyclone_app/feature/home/home_notifier.dart';
 import 'package:spotifyclone_app/feature/library/library_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
-import 'package:spotifyclone_app/product/widget/custom_appbar.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   final Function(String, bool) onPlaylistSelected;
@@ -17,8 +15,7 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  final player = AudioPlayer();
-  final String _title = 'Anasayfa';
+  // Ekran genişliği ve yüksekliğini al
 
   @override
   void initState() {
@@ -46,12 +43,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    CustomAppbar(
-                      message: _title,
-                    ),
                     createGrid(libraryState.playlists),
                     createMusicList('Senin İçin', homeState.musicList),
-                    createPlaylist('Popüler Çalma Listeleri', homeState.playlist),
+                    createPlaylist(
+                        'Popüler Çalma Listeleri', homeState.playlist),
                   ],
                 ),
               ),
@@ -75,12 +70,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
               onTap: () {
                 widget.onPlaylistSelected(playlist['id'], false);
               },
-              child: playlist.containsKey('images') && playlist['images'].isNotEmpty
+              child: playlist.containsKey('images') &&
+                      playlist['images'].isNotEmpty
                   ? Image.network(
                       playlist['images'][0]['url'],
                       fit: BoxFit.cover,
                     )
-                  : playlist.containsKey('imageUrl') && playlist['imageUrl'].isNotEmpty
+                  : playlist.containsKey('imageUrl') &&
+                          playlist['imageUrl'].isNotEmpty
                       ? Image.network(
                           playlist['imageUrl'],
                           fit: BoxFit.cover,
@@ -121,13 +118,30 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
           child: Row(
             children: [
-              SizedBox(
-                height: 60,
-                width: 60,
-                child: playlist.containsKey('imageUrl') && playlist['imageUrl'].isNotEmpty
-                    ? Image.network(
-                        playlist['imageUrl'],
-                        fit: BoxFit.cover,
+              Container(
+                width: 50, // Resmin genişliği
+                height: 50, // Resmin yüksekliği
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.grey[700], // Varsayılan arka plan rengi
+                ),
+                child: playlist != null &&
+                        playlist.containsKey('imageUrl') &&
+                        playlist['imageUrl'] != null &&
+                        playlist['imageUrl'].isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: Image.network(
+                          playlist['imageUrl'],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.music_note,
+                              size: 30,
+                              color: Colors.white,
+                            );
+                          },
+                        ),
                       )
                     : const Icon(
                         Icons.music_note,
@@ -138,7 +152,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  playlist['name'] ?? 'Unnamed Playlist',
+                  playlist != null && playlist.containsKey('name')
+                      ? playlist['name']
+                      : 'Unnamed Playlist',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -159,7 +175,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   List<Widget> createUserListOfPlaylists(List<dynamic> userPlaylist) {
-    return userPlaylist.map((playlist) => createUserPlaylistItem(playlist)).toList();
+    return userPlaylist
+        .map((playlist) => createUserPlaylistItem(playlist))
+        .toList();
   }
 
   Widget createMusic(dynamic music) {
@@ -196,7 +214,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   Widget createMusicList(String label, List<dynamic> musicList) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10),
+      padding: const EdgeInsets.only(left: 10, top: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -209,7 +227,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ),
           ),
           SizedBox(
-            height: 300,
+            height: 255,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemBuilder: (ctx, index) {
@@ -262,15 +280,23 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
     return Container(
       padding: const EdgeInsets.all(10),
-      height: 250,
-      child: GridView.count(
-        childAspectRatio: 7 / 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: 2,
-        children: limitedPlaylist
-            .map((userPlaylist) => createUserPlaylistItem(userPlaylist))
-            .toList(),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: limitedPlaylist.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 7 / 2,
+        ),
+        itemBuilder: (context, index) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return createUserPlaylistItem(limitedPlaylist[index]);
+            },
+          );
+        },
       ),
     );
   }
