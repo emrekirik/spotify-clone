@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:spotifyclone_app/feature/auth/auth_wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:spotifyclone_app/feature/splash/splash_view.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,7 +30,7 @@ class _MyAppState extends State<MyApp> {
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
               backgroundColor: HexColor(gridColor))),
       debugShowCheckedModeBanner: false,
-      home: const AuthWrapper(),
+      home: const SplashView(),
     );
   }
 }

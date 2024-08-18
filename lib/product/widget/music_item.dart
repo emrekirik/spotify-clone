@@ -6,17 +6,25 @@ class MusicItem extends ConsumerWidget {
   final String musicTitle;
   final String artist;
   final dynamic music;
+  final String imageUrl;
 
   const MusicItem({
     super.key,
     required this.musicTitle,
     required this.artist,
     required this.music,
+    required this.imageUrl,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
+      leading: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        // width: 50, // Resim genişliği
+        // height: 50, // Resim yüksekliği
+      ),
       title: Text(
         musicTitle,
         style: const TextStyle(color: Colors.white),
@@ -26,8 +34,9 @@ class MusicItem extends ConsumerWidget {
         style: const TextStyle(color: Colors.white70),
       ),
       trailing: const Icon(
-        Icons.more_vert,
+        Icons.more_horiz,
         color: Colors.white,
+        size: 20,
       ),
       onTap: () {
         ref.read(playerProvider.notifier).playMusic(music);

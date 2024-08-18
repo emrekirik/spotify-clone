@@ -127,7 +127,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.grey.shade700, Colors.black],
+                    colors: [
+                      Colors.grey.shade700,
+                      Colors.black,
+                    ],
                   ),
                 ),
                 child: Column(

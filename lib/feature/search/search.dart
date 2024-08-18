@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:spotifyclone_app/feature/search/category_detail_view.dart';
 import 'package:spotifyclone_app/feature/search/search_notifier.dart';
 import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/product/models/category.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  final Function(String) onCategorySelected;
+  SearchScreen({required this.onCategorySelected, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SearchScreenState();
@@ -100,26 +102,31 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   Widget buildGridTile(Category category) {
     return GridTile(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[800],
-          borderRadius: BorderRadius.circular(10),
-          image: DecorationImage(
-            image: NetworkImage(category.imageURL),
-            fit: BoxFit.cover,
+      child: InkWell(
+        onTap: () {
+          widget.onCategorySelected(category.id);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[800],
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              image: NetworkImage(category.imageURL),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Align(
-          alignment: Alignment.bottomLeft,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              category.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                backgroundColor: Colors.black54,
+          child: Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                category.name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  backgroundColor: Colors.black54,
+                ),
               ),
             ),
           ),

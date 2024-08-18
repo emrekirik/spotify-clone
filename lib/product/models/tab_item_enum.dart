@@ -3,5 +3,6 @@ enum TabItem {
   search,
   library,
   profile,
+  categoryDetail,
   playlistDetail,
 }

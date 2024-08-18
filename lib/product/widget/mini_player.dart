@@ -29,8 +29,9 @@ class MiniPlayer extends ConsumerWidget {
             },
             child: AnimatedContainer(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: HexColor(miniPlayerBackgroundColor)),
+                borderRadius: BorderRadius.circular(12),
+                color: const Color.fromARGB(255, 125, 23, 23),
+              ),
               duration: const Duration(milliseconds: 500),
               width: deviceSize.width,
               height: 56,

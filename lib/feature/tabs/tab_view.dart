@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:spotifyclone_app/feature/playlists/spotify_playlist/playlist_detail.dart';
 import 'package:spotifyclone_app/feature/playlists/user_playlist/user_playlist_detail.dart';
 import 'package:spotifyclone_app/feature/profile/profile_view.dart';
+import 'package:spotifyclone_app/feature/search/category_detail_view.dart';
 import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/feature/home/home_view.dart';
@@ -13,8 +14,8 @@ import 'package:spotifyclone_app/feature/library/library.dart';
 import 'package:spotifyclone_app/feature/search/search.dart';
 import 'package:spotifyclone_app/product/models/tab_item_enum.dart';
 import 'package:spotifyclone_app/product/widget/mini_player.dart';
-import 'package:spotifyclone_app/feature/auth/login/sign_in_view.dart'; // SignInView import edin
-import 'package:spotifyclone_app/feature/auth/login/sign_in_notifier.dart'; // SignInNotifier import edin
+import 'package:spotifyclone_app/feature/auth/login/sign_in_view.dart';
+import 'package:spotifyclone_app/feature/auth/login/sign_in_notifier.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -30,6 +31,7 @@ class _TabViewState extends ConsumerState<TabView> {
   String? selectedPlaylistId;
   bool isUserPlaylist = false;
   User? currentUser;
+  String? selectedCategoryId;
 
   @override
   void initState() {
@@ -37,10 +39,14 @@ class _TabViewState extends ConsumerState<TabView> {
     _loadUser();
   }
 
+  @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
+  }
+
   void _loadUser() {
-    setState(() {
-      currentUser = FirebaseAuth.instance.currentUser;
-    });
+    currentUser = FirebaseAuth.instance.currentUser;
   }
 
   String _getAppBarTitle() {
@@ -53,8 +59,10 @@ class _TabViewState extends ConsumerState<TabView> {
         return 'Kitaplığın';
       case TabItem.playlistDetail:
         return 'Playlist Details';
-      case TabItem.profile: // Yeni tab ekleyin
+      case TabItem.profile:
         return 'Profil';
+      case TabItem.categoryDetail:
+        return 'Kategori Detay';
     }
   }
 
@@ -67,9 +75,8 @@ class _TabViewState extends ConsumerState<TabView> {
     final User? user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      // Kullanıcı oturum açmamışsa SignInView sayfasına yönlendirin
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        player.stop(); // Oturumu kapatırken player'ı durdur
+        player.stop();
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => SignInView(),
@@ -80,48 +87,47 @@ class _TabViewState extends ConsumerState<TabView> {
     }
 
     return Scaffold(
-      appBar:
-          currentTab != TabItem.playlistDetail && currentTab != TabItem.profile
-              ? AppBar(
-                  centerTitle: false,
-                  title: Text(_getAppBarTitle()),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          previousTab = currentTab;
-                          currentTab = TabItem
-                              .profile; // ProfileView'e gitmek için tab'ı değiştir
-                        });
-                      },
-                      child: CircleAvatar(
-                        backgroundImage: currentUser?.photoURL != null
-                            ? NetworkImage(
-                                currentUser!.photoURL!) // Profil fotoğrafı
-                            : null,
-                        child: currentUser?.photoURL == null
-                            ? const Icon(Icons.person) // Varsayılan simge
-                            : null,
-                      ),
-                    ),
+      appBar: currentTab != TabItem.playlistDetail &&
+              currentTab != TabItem.profile &&
+              currentTab != TabItem.categoryDetail
+          ? AppBar(
+              centerTitle: false,
+              title: Text(_getAppBarTitle()),
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      previousTab = currentTab;
+                      currentTab = TabItem.profile;
+                    });
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: currentUser?.photoURL != null
+                        ? NetworkImage(currentUser!.photoURL!)
+                        : null,
+                    child: currentUser?.photoURL == null
+                        ? const Icon(Icons.person)
+                        : null,
                   ),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.logout),
-                      onPressed: () async {
-                        await signInNotifier.signOut();
-                        ref.read(playerProvider.notifier).stopMusic();
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => SignInView(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                )
-              : null,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () async {
+                    await signInNotifier.signOut();
+                    ref.read(playerProvider.notifier).stopMusic();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => SignInView(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            )
+          : null,
       body: Stack(
         children: [
           IndexedStack(
@@ -132,19 +138,24 @@ class _TabViewState extends ConsumerState<TabView> {
                   selectedPlaylistId = playlistId;
                   isUserPlaylist = isUser;
                   previousTab = currentTab;
-                  currentTab = TabItem
-                      .playlistDetail; // PlaylistDetail sayfası için yeni bir index
+                  currentTab = TabItem.playlistDetail;
                 });
               }),
-              const SearchScreen(),
+              SearchScreen(
+                onCategorySelected: (categoryId) {
+                  setState(() {
+                    selectedCategoryId = categoryId;
+                    currentTab = TabItem.categoryDetail;
+                  });
+                },
+              ),
               LibraryScreen(
                 onPlaylistSelected: (playlistId, isUser) {
                   setState(() {
                     selectedPlaylistId = playlistId;
                     isUserPlaylist = isUser;
                     previousTab = currentTab;
-                    currentTab = TabItem
-                        .playlistDetail; // PlaylistDetail sayfası için yeni bir index
+                    currentTab = TabItem.playlistDetail;
                   });
                 },
               ),
@@ -154,38 +165,56 @@ class _TabViewState extends ConsumerState<TabView> {
                     selectedPlaylistId = playlistId;
                     isUserPlaylist = isUser;
                     previousTab = currentTab;
-                    currentTab = TabItem
-                        .playlistDetail; // PlaylistDetail sayfası için yeni bir index
+                    currentTab = TabItem.playlistDetail;
                   });
                 },
                 onBack: () {
                   setState(() {
-                    currentTab = TabItem.home;
+                    currentTab = previousTab ?? TabItem.home;
                   });
                 },
               ),
-              if (selectedPlaylistId != null)
-                isUserPlaylist
-                    ? UserPlaylistDetail(
-                        key: ValueKey(
-                            selectedPlaylistId), // State'i yeniden inşa etmek için key kullanıyoruz
-                        playlistId: selectedPlaylistId!,
-                        onBack: () {
-                          setState(() {
-                            currentTab = previousTab ?? TabItem.home;
-                          });
-                        },
-                      )
-                    : PlaylistDetail(
-                        key: ValueKey(
-                            selectedPlaylistId), // State'i yeniden inşa etmek için key kullanıyoruz
-                        playlistId: selectedPlaylistId!,
-                        onBack: () {
-                          setState(() {
-                            currentTab = previousTab ?? TabItem.home;
-                          });
-                        },
-                      ),
+              selectedCategoryId != null
+                  ? CategoryDetailView(
+                      key: ValueKey(selectedCategoryId),
+                      categoryId: selectedCategoryId!,
+                      onPlaylistSelected: (playlistId, isUser) {
+                        setState(() {
+                          selectedPlaylistId = playlistId;
+                          previousTab = currentTab;
+                          currentTab = TabItem.playlistDetail;
+                        });
+                      },
+                      onBack: () {
+                        setState(() {
+                          currentTab = TabItem.search;
+                        });
+                      },
+                    )
+                  : const SizedBox
+                      .shrink(), // Eğer `selectedCategoryId` null ise placeholder widget
+              selectedPlaylistId != null
+                  ? isUserPlaylist
+                      ? UserPlaylistDetail(
+                          key: ValueKey(selectedPlaylistId),
+                          playlistId: selectedPlaylistId!,
+                          onBack: () {
+                            setState(() {
+                              currentTab = previousTab ?? TabItem.home;
+                            });
+                          },
+                        )
+                      : PlaylistDetail(
+                          key: ValueKey(selectedPlaylistId),
+                          playlistId: selectedPlaylistId!,
+                          onBack: () {
+                            setState(() {
+                              currentTab = previousTab ?? TabItem.home;
+                            });
+                          },
+                        )
+                  : const SizedBox
+                      .shrink(), // Eğer `selectedPlaylistId` null ise placeholder widget
             ],
           ),
           Align(

@@ -37,6 +37,30 @@ class SearchNotifier extends StateNotifier<SearchState> {
           isSearching: false,
         ));
 
+  // Şarkıları kontrol eden fonksiyon
+  Future<bool> _hasTracks(String categoryId) async {
+    final accessToken = await TokenManager().getAccessToken();
+    final tracksResponse = await http.get(
+      Uri.parse(
+          '$baseUrl/browse/categories/$categoryId/playlists?country=US&limit=1'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (tracksResponse.statusCode == 200) {
+      final tracksData = json.decode(tracksResponse.body);
+      // Kategorinin içeriğinde en az bir playlist ve şarkı var mı diye kontrol ediyoruz
+      if (tracksData != null &&
+          tracksData['playlists'] != null &&
+          tracksData['playlists']['items'].isNotEmpty) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   Future<void> fetchCategories() async {
     final accessToken = await TokenManager().getAccessToken();
     final categoriesResponse = await http.get(
@@ -49,10 +73,20 @@ class SearchNotifier extends StateNotifier<SearchState> {
     if (categoriesResponse.statusCode == 200) {
       final categoriesData = json.decode(categoriesResponse.body);
       if (categoriesData != null && categoriesData['categories'] != null) {
-        final categories = (categoriesData['categories']['items'] as List)
+        final allCategories = (categoriesData['categories']['items'] as List)
             .map((item) => Category.fromJson(item))
             .toList();
-        state = state.copyWith(categories: categories);
+
+        // Boş olmayan kategorileri filtreleyip listeye ekliyoruz
+        List<Category> filteredCategories = [];
+        for (Category category in allCategories) {
+          final hasTracks = await _hasTracks(category.id); // İçeriği kontrol et
+          if (hasTracks) {
+            filteredCategories.add(category);
+          }
+        }
+
+        state = state.copyWith(categories: filteredCategories);
       } else {
         print('Failed to load categories: ${categoriesResponse.body}');
       }

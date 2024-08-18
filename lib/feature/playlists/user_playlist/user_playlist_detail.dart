@@ -67,10 +67,10 @@ class _UserPlaylistDetailState extends ConsumerState<UserPlaylistDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final sizeWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      backgroundColor: HexColor(backgroundColor),
       appBar: AppBar(
-        backgroundColor: HexColor(backgroundColor),
+        backgroundColor: const Color.fromARGB(255, 125, 23, 23),
         leading: IconButton(
           onPressed: widget.onBack,
           icon: const Icon(Icons.arrow_back_ios),
@@ -80,105 +80,127 @@ class _UserPlaylistDetailState extends ConsumerState<UserPlaylistDetail> {
       body: Stack(
         children: [
           _playlist == null
-              ? const Center(
-                  child: CircularProgressIndicator(),
+              ? Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color.fromARGB(255, 125, 23, 23),
+                        HexColor(backgroundColor),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.center,
+                    ),
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 )
-              : Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          if (_playlist?['songs'] != null &&
-                              _playlist!['songs'].isNotEmpty)
-                            SizedBox(
-                              height: 180,
-                              width: 180,
-                              child: Image.network(_playlist!['songs'][0]
-                                  ['album']['images'][0]['url']),
-                            )
-                          else
-                            Container(
-                              height: 180,
-                              width: 180,
-                              color: Colors.grey,
-                              child: const Center(
-                                child: Icon(
-                                  Icons.music_note,
-                                  color: Colors.white,
-                                  size: 100,
+              : Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color.fromARGB(255, 125, 23, 23),
+                        HexColor(backgroundColor),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.center,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            if (_playlist?['songs'] != null &&
+                                _playlist!['songs'].isNotEmpty)
+                              SizedBox(
+                                width: sizeWidth * 0.6,
+                                child: Image.network(_playlist!['songs'][0]
+                                    ['album']['images'][0]['url']),
+                              )
+                            else
+                              Container(
+                                height: 180,
+                                width: 180,
+                                color: Colors.grey,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.music_note,
+                                    color: Colors.white,
+                                    size: 100,
+                                  ),
                                 ),
                               ),
-                            ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
                                 children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      _playlist?['name'] ?? 'Unknown',
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    flex: 4,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          _playlist?['name'] ?? 'Unknown',
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          _playlist?['owner'] ?? 'Unknown',
+                                          style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 15),
+                                        ),
+                                        Text(
+                                          'Playlist • ${_tracks?.length ?? 0} songs',
+                                          style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 15),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      _playlist?['owner'] ?? 'Unknown',
-                                      style: const TextStyle(
-                                          color: Colors.white70, fontSize: 18),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      'Playlist • ${_tracks?.length ?? 0} songs',
-                                      style: const TextStyle(
-                                          color: Colors.white70, fontSize: 18),
+                                  Expanded(
+                                    child: FloatingActionButton(
+                                      onPressed: () {
+                                        if (_tracks != null &&
+                                            _tracks!.isNotEmpty) {
+                                          ref
+                                              .read(playerProvider.notifier)
+                                              .playMusic(_tracks![0]);
+                                        }
+                                      },
+                                      backgroundColor: HexColor(spotifyGreenColor),
+                                      shape: const CircleBorder(),
+                                      child: const Icon(Icons.play_arrow, color: Colors.black,),
                                     ),
                                   ),
                                 ],
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 100),
-                                child: FloatingActionButton(
-                                  onPressed: () {
-                                    if (_tracks != null &&
-                                        _tracks!.isNotEmpty) {
-                                      ref
-                                          .read(playerProvider.notifier)
-                                          .playMusic(_tracks![0]);
-                                    }
-                                  },
-                                  backgroundColor: Colors.green,
-                                  shape: const CircleBorder(),
-                                  child: const Icon(Icons.play_arrow),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _tracks?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final track = _tracks![index];
-                          return MusicItem(
-                            musicTitle: track['name'],
-                            artist: track['artists'][0]['name'],
-                            music: _tracks![index],
-                          );
-                        },
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _tracks?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            final track = _tracks![index];
+                            return MusicItem(
+                                musicTitle: track['name'],
+                                artist: track['artists'][0]['name'],
+                                music: _tracks![index],
+                                imageUrl: track['album']['images'][0]['url']);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
         ],
       ),
