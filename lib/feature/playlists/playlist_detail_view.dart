@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:spotifyclone_app/feature/playlists/spotify_playlist/playlist_detail_notifier.dart';
-import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/playlist_detail_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
-import 'package:spotifyclone_app/product/widget/music_item.dart';
+import 'package:spotifyclone_app/feature/playlists/music_item.dart';
 
-class PlaylistDetail extends ConsumerStatefulWidget {
+class PlaylistDetailView extends ConsumerStatefulWidget {
   final VoidCallback onBack;
   final String playlistId;
 
-  const PlaylistDetail(
+  const PlaylistDetailView(
       {required this.onBack, required this.playlistId, super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _PlaylistDetailState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PlaylistDetailViewState();
 }
 
-class _PlaylistDetailState extends ConsumerState<PlaylistDetail> {
+class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
   @override
   void initState() {
     super.initState();
@@ -28,7 +28,7 @@ class _PlaylistDetailState extends ConsumerState<PlaylistDetail> {
   }
 
   @override
-  void didUpdateWidget(PlaylistDetail oldWidget) {
+  void didUpdateWidget(PlaylistDetailView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.playlistId != widget.playlistId) {
       Future.microtask(

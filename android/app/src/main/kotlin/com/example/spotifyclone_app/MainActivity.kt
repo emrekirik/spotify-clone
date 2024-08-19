@@ -1,4 +1,4 @@
-package com.example.spotifyclone_app
+package com.emrekirik.spotifycloneApp
 
 import io.flutter.embedding.android.FlutterActivity
 

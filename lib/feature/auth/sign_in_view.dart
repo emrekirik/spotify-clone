@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:spotifyclone_app/feature/auth/login/sign_in_notifier.dart';
-import 'package:spotifyclone_app/feature/auth/signUp/sign_up_view.dart';
+import 'package:spotifyclone_app/feature/providers/sign_in_notifier.dart';
+import 'package:spotifyclone_app/feature/auth/sign_up_view.dart';
+import 'package:spotifyclone_app/feature/providers/sign_up_notifier.dart';
 import 'package:spotifyclone_app/feature/tabs/tab_view.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/product/constants/string_constants.dart';
@@ -44,17 +45,52 @@ class SignInView extends ConsumerWidget {
             _SignInCustomButton(
               title: StringConstants.signInButtonTitleGoogle,
               icon: FontAwesomeIcons.google,
-              onPressed: () {},
-            ),
-            _SignInCustomButton(
-              title: StringConstants.signInButtonTitleFacebook,
-              icon: FontAwesomeIcons.facebook,
-              onPressed: () {},
+              onPressed: () async {
+                final String? result =
+                    await ref.read(signUpProvider.notifier).signInWithGoogle();
+
+                if (result == 'Success') {
+                  // Başarılı giriş yapıldı, yönlendirme yapıyoruz
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const TabView()), // Ana sayfanıza yönlendirin
+                  );
+                } else {
+                  // Hata mesajını göster
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result ?? 'Bilinmeyen bir hata oluştu.'),
+                    ),
+                  );
+                }
+              },
             ),
             _SignInCustomButton(
               title: StringConstants.signInButtonTitleApple,
               icon: FontAwesomeIcons.apple,
-              onPressed: () {},
+              onPressed: () async {
+                final String? result =
+                    await ref.read(signUpProvider.notifier).signInWithApple();
+
+                if (result == 'Success') {
+                  // Başarılı giriş yapıldı, yönlendirme yapıyoruz
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const TabView()), // Ana sayfanıza yönlendirin
+                  );
+                } else {
+                  // Hata mesajını göster
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result ?? 'Bilinmeyen bir hata oluştu.'),
+                    ),
+                  );
+                }
+              },
             ),
             const SizedBox(
               height: 30,
@@ -151,10 +187,10 @@ class SignInView extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  _CustomText(
-                      isOppacity: false,
-                      isUnderlined: true,
-                      title: StringConstants.forgotYourPassword),
+                  // _CustomText(
+                  //     isOppacity: false,
+                  //     isUnderlined: true,
+                  //     title: StringConstants.forgotYourPassword),
                   _CustomText(
                       isUnderlined: false,
                       title: StringConstants.dontYouHaveAnAccount,

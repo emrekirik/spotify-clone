@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spotifyclone_app/feature/home/home_notifier.dart';
-import 'package:spotifyclone_app/feature/library/library_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/home_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/library_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
-import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/player_notifier.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   final Function(String, bool) onPlaylistSelected;

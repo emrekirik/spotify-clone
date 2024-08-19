@@ -3,19 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:spotifyclone_app/feature/playlists/spotify_playlist/playlist_detail.dart';
-import 'package:spotifyclone_app/feature/playlists/user_playlist/user_playlist_detail.dart';
+import 'package:spotifyclone_app/feature/playlists/playlist_detail_view.dart';
+import 'package:spotifyclone_app/feature/playlists/user_playlist_detail_view.dart';
 import 'package:spotifyclone_app/feature/profile/profile_view.dart';
 import 'package:spotifyclone_app/feature/search/category_detail_view.dart';
-import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/feature/home/home_view.dart';
 import 'package:spotifyclone_app/feature/library/library.dart';
 import 'package:spotifyclone_app/feature/search/search.dart';
 import 'package:spotifyclone_app/product/models/tab_item_enum.dart';
 import 'package:spotifyclone_app/product/widget/mini_player.dart';
-import 'package:spotifyclone_app/feature/auth/login/sign_in_view.dart';
-import 'package:spotifyclone_app/feature/auth/login/sign_in_notifier.dart';
+import 'package:spotifyclone_app/feature/auth/sign_in_view.dart';
+import 'package:spotifyclone_app/feature/providers/sign_in_notifier.dart';
 
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key});
@@ -91,6 +91,7 @@ class _TabViewState extends ConsumerState<TabView> {
               currentTab != TabItem.profile &&
               currentTab != TabItem.categoryDetail
           ? AppBar(
+              backgroundColor: HexColor(backgroundColor),
               centerTitle: false,
               title: Text(_getAppBarTitle()),
               leading: Padding(
@@ -195,7 +196,7 @@ class _TabViewState extends ConsumerState<TabView> {
                       .shrink(), // Eğer `selectedCategoryId` null ise placeholder widget
               selectedPlaylistId != null
                   ? isUserPlaylist
-                      ? UserPlaylistDetail(
+                      ? UserPlaylistDetailView(
                           key: ValueKey(selectedPlaylistId),
                           playlistId: selectedPlaylistId!,
                           onBack: () {
@@ -204,7 +205,7 @@ class _TabViewState extends ConsumerState<TabView> {
                             });
                           },
                         )
-                      : PlaylistDetail(
+                      : PlaylistDetailView(
                           key: ValueKey(selectedPlaylistId),
                           playlistId: selectedPlaylistId!,
                           onBack: () {

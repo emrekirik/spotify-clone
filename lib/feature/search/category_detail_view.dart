@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:spotifyclone_app/feature/search/category_detail_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/category_detail_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 
 class CategoryDetailView extends ConsumerStatefulWidget {
@@ -43,6 +43,7 @@ class _CategoryDetailViewState extends ConsumerState<CategoryDetailView> {
     final sizeHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: sizeHeight * 0.1,
         centerTitle: false,
         title: Column(

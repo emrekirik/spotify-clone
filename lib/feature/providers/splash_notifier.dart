@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spotifyclone_app/feature/search/search_notifier.dart'; // Diğer Notifier'ların import edilmesi
-import 'package:spotifyclone_app/feature/home/home_notifier.dart';
-import 'package:spotifyclone_app/feature/library/library_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/search_notifier.dart'; // Diğer Notifier'ların import edilmesi
+import 'package:spotifyclone_app/feature/providers/home_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/library_notifier.dart';
 
 class SplashState {
   final bool isLoadingComplete;

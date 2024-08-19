@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:spotifyclone_app/feature/library/library_notifier.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:spotifyclone_app/feature/providers/library_notifier.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   final Function(String, bool) onPlaylistSelected;
@@ -22,7 +24,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   String? newPhotoURL;
 
   final ImagePicker _picker = ImagePicker(); // ImagePicker nesnesi
-  File? _imageFile; // Seçilen fotoğraf dosyası
+  XFile? _imageFile; // Seçilen fotoğraf dosyası
   bool _isUploading = false;
 
   @override
@@ -44,21 +46,41 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         final fileSize = await pickedFile.length();
+
+        // Eğer dosya 5MB'tan büyükse sıkıştır
         if (fileSize > 5 * 1024 * 1024) {
-          // 5 MB limit
-          print('Dosya çok büyük. Lütfen daha küçük bir dosya seçin.');
-          return;
+          final tempDir = await getTemporaryDirectory();
+          final targetPath = "${tempDir.path}/temp_compressed.jpg";
+
+          // Dosyayı sıkıştır
+          XFile? compressedImage = await FlutterImageCompress.compressAndGetFile(
+            pickedFile.path,
+            targetPath,
+            quality: 50, // Sıkıştırma kalitesi
+          );
+
+          if (compressedImage != null) {
+            _imageFile = XFile(compressedImage
+                .path); // Sıkıştırılmış dosyayı XFile olarak ayarla
+          } else {
+            _imageFile =
+                pickedFile; // Sıkıştırma başarısızsa orijinal dosyayı kullan
+          }
+        } else {
+          _imageFile = pickedFile;
         }
 
         setState(() {
           _isUploading = true; // Yükleme başlıyor
         });
 
-        _imageFile = File(pickedFile.path);
-        String fileName =
-            'profile_pictures/${currentUser!.uid}.jpg'; // JPEG formatı
-        UploadTask uploadTask =
-            FirebaseStorage.instance.ref().child(fileName).putFile(_imageFile!);
+        File fileToUpload = File(_imageFile!.path); // XFile'ı File'a dönüştürün
+        String fileName = 'profile_pictures/${currentUser!.uid}.jpg';
+
+        UploadTask uploadTask = FirebaseStorage.instance
+            .ref()
+            .child(fileName)
+            .putFile(fileToUpload);
 
         TaskSnapshot snapshot = await uploadTask;
         String downloadURL = await snapshot.ref.getDownloadURL();

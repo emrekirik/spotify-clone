@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:spotifyclone_app/feature/auth/signUp/sign_up_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/sign_up_notifier.dart';
 import 'package:spotifyclone_app/feature/tabs/tab_view.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/product/constants/string_constants.dart';

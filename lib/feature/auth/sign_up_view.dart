@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:spotifyclone_app/feature/auth/login/sign_in_view.dart';
-import 'package:spotifyclone_app/feature/auth/signUp/password_information_viewdart';
-import 'package:spotifyclone_app/feature/auth/signUp/sign_up_notifier.dart';
+import 'package:spotifyclone_app/feature/auth/password_information_view.dart';
+import 'package:spotifyclone_app/feature/auth/sign_in_view.dart';
+import 'package:spotifyclone_app/feature/providers/sign_up_notifier.dart';
+import 'package:spotifyclone_app/feature/tabs/tab_view.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
 import 'package:spotifyclone_app/product/constants/string_constants.dart';
 
@@ -85,9 +86,9 @@ class SignUpView extends ConsumerWidget {
                                 emailController.text,
                               );
                               if (message == null) {
-                                Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => PasswodInfermationView()));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        PasswordInformationView()));
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -105,7 +106,7 @@ class SignUpView extends ConsumerWidget {
                     ),
                   ),
                   const Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 30),
+                    padding: EdgeInsets.symmetric(vertical: 30),
                     child: Divider(
                       indent: 25,
                       endIndent: 25,
@@ -114,17 +115,57 @@ class SignUpView extends ConsumerWidget {
                   _SignInCustomButton(
                     title: StringConstants.signUpButtonTitleGoogle,
                     icon: FontAwesomeIcons.google,
-                    onPressed: () {},
-                  ),
-                  _SignInCustomButton(
-                    title: StringConstants.signUpButtonTitleFacebook,
-                    icon: FontAwesomeIcons.facebook,
-                    onPressed: () {},
+                    onPressed: () async {
+                      // context yerine ref kullanarak notifier'ı çağırıyoruz
+                      final String? result = await ref
+                          .read(signUpProvider.notifier)
+                          .signInWithGoogle();
+
+                      if (result == 'Success') {
+                        // Başarılı giriş yapıldı, yönlendirme yapıyoruz
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  TabView()), // Ana sayfanıza yönlendirin
+                        );
+                      } else {
+                        // Hata mesajını göster
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text(result ?? 'Bilinmeyen bir hata oluştu.'),
+                          ),
+                        );
+                      }
+                    },
                   ),
                   _SignInCustomButton(
                     title: StringConstants.signUpButtonTitleApple,
                     icon: FontAwesomeIcons.apple,
-                    onPressed: () {},
+                    onPressed: () async {
+                      final String? result = await ref
+                          .read(signUpProvider.notifier)
+                          .signInWithApple();
+
+                      if (result == 'Success') {
+                        // Başarılı giriş yapıldı, yönlendirme yapıyoruz
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const TabView()), // Ana sayfanıza yönlendirin
+                        );
+                      } else {
+                        // Hata mesajını göster
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text(result ?? 'Bilinmeyen bir hata oluştu.'),
+                          ),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(
                     height: 30,

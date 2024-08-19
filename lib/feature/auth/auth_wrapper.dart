@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:spotifyclone_app/feature/auth/login/sign_in_view.dart';
+import 'package:spotifyclone_app/feature/auth/sign_in_view.dart';
 import 'package:spotifyclone_app/feature/tabs/tab_view.dart';
 
 class AuthWrapper extends StatelessWidget {

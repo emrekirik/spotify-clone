@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spotifyclone_app/feature/splash/splash_notifier.dart';
+import 'package:hexcolor/hexcolor.dart';
+import 'package:spotifyclone_app/feature/providers/splash_notifier.dart';
 import 'package:spotifyclone_app/feature/tabs/tab_view.dart';
+import 'package:spotifyclone_app/product/constants/color_constants.dart';
 
 class SplashView extends ConsumerWidget {
   const SplashView({super.key});
@@ -19,18 +21,20 @@ class SplashView extends ConsumerWidget {
       });
     } else {
       // Veri çekme işlemini başlat
-      ref.read(splashProvider.notifier).loadData();
     }
+    ref.read(splashProvider.notifier).loadData();
 
     // Yükleme ekranı göster
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: HexColor(backgroundColor),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 20),
-            Text('Uygulama yükleniyor...')
+            Image.asset(
+              'assets/icon/app_icon.png',
+              height: 150,
+            ),
           ],
         ),
       ),

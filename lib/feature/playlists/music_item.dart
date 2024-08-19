@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/player_notifier.dart';
 
 class MusicItem extends ConsumerWidget {
   final String musicTitle;
@@ -22,8 +22,6 @@ class MusicItem extends ConsumerWidget {
       leading: Image.network(
         imageUrl,
         fit: BoxFit.cover,
-        // width: 50, // Resim genişliği
-        // height: 50, // Resim yüksekliği
       ),
       title: Text(
         musicTitle,

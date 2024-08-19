@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spotifyclone_app/feature/library/library_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/library_notifier.dart';
 
 class PlaylistCreateBottomSheet extends ConsumerWidget {
   final dynamic music;

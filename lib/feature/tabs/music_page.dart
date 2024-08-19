@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
+
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
-import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
-import 'package:spotifyclone_app/product/widget/playlist_add_bottom_sheet.dart';
+import 'package:spotifyclone_app/feature/providers/player_notifier.dart';
+import 'package:spotifyclone_app/feature/playlists/playlist_add_bottom_sheet.dart';
 
 class MusicPage extends ConsumerWidget {
   final dynamic music;
@@ -14,11 +15,11 @@ class MusicPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final playerState = ref.watch(playerProvider);
     final playerNotifier = ref.read(playerProvider.notifier);
+    final sizeWidth = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
-      backgroundColor: HexColor(miniPlayerBackgroundColor),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromARGB(255, 125, 23, 23),
         elevation: 0,
         leading: IconButton(
           icon: Image.asset(
@@ -64,28 +65,57 @@ class MusicPage extends ConsumerWidget {
           )
         ],
       ),
-      body: Center(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 125, 23, 23),
+              HexColor(backgroundColor),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.network(
-              music['album']['images'][0]['url'],
-              fit: BoxFit.cover,
-              width: 300,
-              height: 300,
+            const SizedBox(
+              height: 60,
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20.0), // Yuvarlatma miktarı
+              child: Image.network(
+                music['album']['images'][0]['url'],
+                fit: BoxFit.cover,
+                width: sizeWidth * 0.85,
+              ),
             ),
             const SizedBox(height: 20),
-            Text(
-              music['name'],
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              music['artists'][0]['name'],
-              style: const TextStyle(color: Colors.white70, fontSize: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      music['name'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      music['artists'][0]['name'],
+                      style:
+                          const TextStyle(color: Colors.white70, fontSize: 20),
+                    ),
+                  ],
+                ),
+              ],
             ),
             Slider(
               value: playerState.currentPosition.inSeconds.toDouble(),
@@ -114,25 +144,52 @@ class MusicPage extends ConsumerWidget {
                 ],
               ),
             ),
-            IconButton(
-              onPressed: () async {
-                if (playerState.isPlaying) {
-                  await playerNotifier.pauseMusic();
-                } else {
-                  await playerNotifier.playMusic(music);
-                }
-              },
-              icon: playerState.isPlaying
-                  ? const Icon(
-                      Icons.pause_circle_filled,
-                      color: Colors.white,
-                      size: 64,
-                    )
-                  : const Icon(
-                      Icons.play_circle_filled,
-                      color: Colors.white,
-                      size: 64,
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.skip_previous,
+                    color: Colors.white,
+                    size: 60,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                IconButton(
+                  onPressed: () async {
+                    if (playerState.isPlaying) {
+                      await playerNotifier.pauseMusic();
+                    } else {
+                      await playerNotifier.playMusic(music);
+                    }
+                  },
+                  icon: playerState.isPlaying
+                      ? const Icon(
+                          Icons.pause_circle_filled,
+                          color: Colors.white,
+                          size: 90,
+                        )
+                      : const Icon(
+                          Icons.play_circle_filled,
+                          color: Colors.white,
+                          size: 90,
+                        ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                IconButton(
+                  onPressed: () async {},
+                  icon: const Icon(
+                    Icons.skip_next,
+                    color: Colors.white,
+                    size: 64,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

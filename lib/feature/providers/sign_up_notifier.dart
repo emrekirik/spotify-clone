@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:spotifyclone_app/product/models/gender_enum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -50,6 +52,86 @@ class SignUpNotifier extends StateNotifier<SignUpState> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<String?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        return 'Google giriş işlemi iptal edildi.';
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Firebase'de oturum açma
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
+      // Kullanıcı bilgilerini Firestore'a kaydetme (ilk defa kaydolduysa)
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'userId': userCredential.user!.uid,
+          'email': userCredential.user!.email,
+          'name': userCredential.user!.displayName,
+          'photoURL': userCredential.user!.photoURL,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      return 'Success';
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+  // Apple ile giriş fonksiyonu
+  Future<String?> signInWithApple() async {
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      // Firebase için Apple credential oluştur
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      // Firebase'de oturum açma
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(oauthCredential);
+
+      // Kullanıcı bilgilerini Firestore'a kaydetme (ilk defa kaydolduysa)
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        final displayName =
+            "${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}".trim();
+
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'userId': userCredential.user!.uid,
+          'email': appleCredential.email,
+          'name': displayName.isEmpty ? 'Anonymous' : displayName,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      return 'Success';
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    } catch (e) {
+      return e.toString();
+    }
+  }
 
   Future<String?> registration() async {
     if (state.email == null || state.password == null) {

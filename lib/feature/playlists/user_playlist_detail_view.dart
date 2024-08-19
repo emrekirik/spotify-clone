@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:spotifyclone_app/feature/tabs/player_notifier.dart';
+import 'package:spotifyclone_app/feature/providers/player_notifier.dart';
 import 'package:spotifyclone_app/product/constants/color_constants.dart';
-import 'package:spotifyclone_app/product/widget/music_item.dart';
+import 'package:spotifyclone_app/feature/playlists/music_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class UserPlaylistDetail extends ConsumerStatefulWidget {
+class UserPlaylistDetailView extends ConsumerStatefulWidget {
   final VoidCallback onBack;
   final String playlistId;
 
-  const UserPlaylistDetail(
+  const UserPlaylistDetailView(
       {required this.onBack, required this.playlistId, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _UserPlaylistDetailState();
+      _UserPlaylistDetailViewState();
 }
 
-class _UserPlaylistDetailState extends ConsumerState<UserPlaylistDetail> {
+class _UserPlaylistDetailViewState extends ConsumerState<UserPlaylistDetailView> {
   Map<String, dynamic>? _playlist;
   List<dynamic>? _tracks;
 
@@ -58,7 +58,7 @@ class _UserPlaylistDetailState extends ConsumerState<UserPlaylistDetail> {
   }
 
   @override
-  void didUpdateWidget(UserPlaylistDetail oldWidget) {
+  void didUpdateWidget(UserPlaylistDetailView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.playlistId != widget.playlistId) {
       fetchPlaylistDetails();

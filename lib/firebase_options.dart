@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1028898398223',
     projectId: 'spotifyclone-c0f1d',
     storageBucket: 'spotifyclone-c0f1d.appspot.com',
-    iosBundleId: 'com.example.spotifycloneApp',
+    iosBundleId: 'com.emrekirik.spotifycloneApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1028898398223',
     projectId: 'spotifyclone-c0f1d',
     storageBucket: 'spotifyclone-c0f1d.appspot.com',
-    iosBundleId: 'com.example.spotifycloneApp',
+    iosBundleId: 'com.emrekirik.spotifycloneApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
