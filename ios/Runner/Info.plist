@@ -2,7 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- API ve Firebase Ayarları -->
 	<key>API_KEY</key>
 	<string>AIzaSyDatGYoy08ysuGjtJNOE9u8B6v679vsw0Y</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,8 +12,6 @@
 	<string>1028898398223-hp2jg1hccf1a5pqs08tp1vc1isu4c350.apps.googleusercontent.com</string>
 	<key>PROJECT_ID</key>
 	<string>spotifyclone-c0f1d</string>
-	
-	<!-- Bundle Ayarları -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -35,34 +32,23 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
-
-	<!-- URL Schemes -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- Google Sign-In için ters çevrilmiş CLIENT_ID -->
 				<string>com.googleusercontent.apps.1028898398223-1vr3a27771ffg6n4lhlhvr3tl84djb6q</string>
-				<!-- Apple Sign-In için ters çevrilmiş CLIENT_ID -->
 				<string>spotifycloneApp.emrekirik.com</string>
-				<!-- Diğer özel URL şemaları -->
 				<string>spotifyclone</string>
 			</array>
 		</dict>
 	</array>
-
-	<!-- Firebase Delegate Proxy -->
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
-
-	<!-- Launch ve Storyboard -->
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-
-	<!-- Desteklenen Yönlendirmeler -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -76,27 +62,19 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<!-- App Transport Security -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-
-	<!-- İzinler -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Bu uygulama, sesli arama yapabilmek için mikrofon erişimine ihtiyaç duyar.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Fotoğraf galerisine erişmek için izin gerekiyor.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Kamera erişimi için izin gerekiyor.</string>
-
-	<!-- Apple Sign-In -->
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Apple ile oturum açmak için izin gerekiyor.</string>
-
-	<!-- Ekstra Ayarlar -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>LSRequiresIPhoneOS</key>

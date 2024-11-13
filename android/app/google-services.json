@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1028898398223:android:94f3ca8c023d4285c7037a",
+        "mobilesdk_app_id": "1:1028898398223:android:9b52fe23fe094f12c7037a",
         "android_client_info": {
           "package_name": "com.emrekirik.spotifycloneApp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1028898398223-v5sc8oo6m4nu9rcsltlan44o12v1819i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD5FHZawLg63jP4DMh8F0YZ0ngHzY_UU9Q"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1028898398223-v5sc8oo6m4nu9rcsltlan44o12v1819i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1028898398223-1vr3a27771ffg6n4lhlhvr3tl84djb6q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.emrekirik.spotifycloneApp"
+              }
+            }
+          ]
         }
       }
     }
