@@ -17,17 +17,7 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> {
   // Ekran genişliği ve yüksekliğini al
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final homeNotifier = ref.read(homeProvider.notifier);
-      final libraryNotifier = ref.read(libraryProvider.notifier);
-      homeNotifier.fetchFeaturedPlaylists();
-      homeNotifier.fetchMusic();
-      libraryNotifier.fetchPlaylists();
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +34,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 child: Column(
                   children: [
                     createGrid(libraryState.playlists),
-                    createMusicList('Senin İçin', homeState.musicList),
+                    createMusicList('Audius Trendleri', homeState.musicList),
                     createPlaylist(
                         'Popüler Çalma Listeleri', homeState.playlist),
                   ],
@@ -191,20 +181,29 @@ class _HomeViewState extends ConsumerState<HomeView> {
             width: 180,
             child: InkWell(
               onTap: () {
-                ref.read(playerProvider.notifier).playMusic(music['track']);
+                ref.read(playerProvider.notifier).playMusic(music);
               },
               child: Image.network(
-                music['track']['album']['images'][0]['url'],
+                music['artwork'],
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.error,
+                    size: 50,
+                    color: Colors.red,
+                  );
+                },
               ),
             ),
           ),
           Text(
-            music['track']['name'],
+            music['title'].length > 20
+                ? '${music['title'].substring(0, 20)}...'
+                : music['title'],
             style: const TextStyle(color: Colors.white),
           ),
           Text(
-            music['track']['artists'][0]['name'],
+            music['artist'],
             style: const TextStyle(color: Colors.white),
           ),
         ],

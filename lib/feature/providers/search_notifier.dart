@@ -50,10 +50,13 @@ class SearchNotifier extends StateNotifier<SearchState> {
 
     if (tracksResponse.statusCode == 200) {
       final tracksData = json.decode(tracksResponse.body);
+      print(tracksData);
       // Kategorinin içeriğinde en az bir playlist ve şarkı var mı diye kontrol ediyoruz
-      if (tracksData != null &&
-          tracksData['playlists'] != null &&
-          tracksData['playlists']['items'].isNotEmpty) {
+      if (tracksData != null
+          //&&
+          // tracksData['playlists'] != null &&
+          // tracksData['playlists']['items'].isNotEmpty
+          ) {
         return true;
       }
     }
@@ -64,7 +67,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
   Future<void> fetchCategories() async {
     final accessToken = await TokenManager().getAccessToken();
     final categoriesResponse = await http.get(
-      Uri.parse('$baseUrl/browse/categories?country=US&locale=en_US'),
+      Uri.parse('$baseUrl/browse/categories?offset=0&limit=20&locale=tr-TR'),
       headers: {
         'Authorization': 'Bearer $accessToken',
       },
@@ -85,8 +88,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
             filteredCategories.add(category);
           }
         }
-
-        state = state.copyWith(categories: filteredCategories);
+        state = state.copyWith(categories: allCategories);
       } else {
         print('Failed to load categories: ${categoriesResponse.body}');
       }

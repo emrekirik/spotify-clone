@@ -53,7 +53,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           final targetPath = "${tempDir.path}/temp_compressed.jpg";
 
           // Dosyayı sıkıştır
-          XFile? compressedImage = await FlutterImageCompress.compressAndGetFile(
+          XFile? compressedImage =
+              await FlutterImageCompress.compressAndGetFile(
             pickedFile.path,
             targetPath,
             quality: 50, // Sıkıştırma kalitesi
@@ -163,16 +164,20 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          CircleAvatar(
-                            radius: 60,
-                            backgroundImage: currentUser?.photoURL != null
-                                ? NetworkImage(currentUser!.photoURL!)
-                                : null,
-                            child:
-                                currentUser?.photoURL == null && !_isUploading
-                                    ? const Icon(Icons.person, size: 60)
-                                    : null,
-                          ),
+                          currentUser?.photoURL != null &&
+                                  currentUser!.photoURL!.isNotEmpty
+                              ? ClipOval(
+                                  child: Image.network(
+                                    currentUser!.photoURL!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.person,
+                                          size: 60, color: Colors.white);
+                                    },
+                                  ),
+                                )
+                              : const Icon(Icons.person,
+                                  size: 60, color: Colors.white),
                           if (_isUploading)
                             const CircularProgressIndicator(
                               valueColor:

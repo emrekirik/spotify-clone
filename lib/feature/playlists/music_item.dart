@@ -37,7 +37,7 @@ class MusicItem extends ConsumerWidget {
         size: 20,
       ),
       onTap: () {
-        ref.read(playerProvider.notifier).playMusic(music);
+        // ref.read(playerProvider.notifier).playMusic(music);
       },
     );
   }

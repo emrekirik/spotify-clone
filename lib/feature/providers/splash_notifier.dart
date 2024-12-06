@@ -26,7 +26,8 @@ class SplashNotifier extends StateNotifier<SplashState> {
       await Future.wait([
         ref.read(searchProvider.notifier).fetchCategories(),
         ref.read(homeProvider.notifier).fetchFeaturedPlaylists(),
-        ref.read(homeProvider.notifier).fetchMusic(),
+        ref.read(homeProvider.notifier).fetchMusicFromAudius(),
+        // ref.read(homeProvider.notifier).fetchMusic(),
         ref.read(libraryProvider.notifier).fetchPlaylists(), // LibraryNotifier'dan veri çekme
       ]);
 

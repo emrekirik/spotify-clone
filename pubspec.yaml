@@ -50,6 +50,8 @@ dependencies:
   sign_in_with_apple: ^6.1.1
   flutter_image_compress: ^2.3.0
   path_provider: ^2.1.4
+  html: ^0.15.5
+  json_path: ^0.7.4
 
 
 dev_dependencies:

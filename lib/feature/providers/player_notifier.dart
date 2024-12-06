@@ -19,6 +19,8 @@ class PlayerState {
 // Creating a StateNotifier for PlayerState
 class PlayerNotifier extends StateNotifier<PlayerState> {
   final AudioPlayer _player = AudioPlayer();
+  List<dynamic> _musicList = []; // Şarkı listesi
+  int _currentTrackIndex = 0;
 
   PlayerNotifier()
       : super(PlayerState(
@@ -48,10 +50,11 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
 
   Future<void> playMusic(dynamic track) async {
     if (state.currentTrack == track && state.currentPosition > Duration.zero) {
+      print("Aynı şarkıyı tekrar çalıyor.");
       _player.seek(state.currentPosition);
       _player.play();
-    } else if (track['preview_url'] != null) {
-      await _player.setUrl(track['preview_url']);
+    } else if (track['stream_url'] != null) {
+      await _player.setUrl(track['stream_url']);
       _player.play();
     }
 
@@ -72,22 +75,51 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
       duration: state.duration,
     );
   }
+
   Future<void> stopMusic() async {
-  await _player.stop();
-  state = PlayerState(
-    isPlaying: false,
-    currentTrack: null,
-    currentPosition: Duration.zero,
-    duration: Duration.zero,
-  );
-}
+    await _player.stop();
+    state = PlayerState(
+      isPlaying: false,
+      currentTrack: null,
+      currentPosition: Duration.zero,
+      duration: Duration.zero,
+    );
+  }
+
+  void setMusicList(List<dynamic> musicList) {
+    _musicList = musicList;
+    _currentTrackIndex = 0; // Liste her ayarlandığında başlangıçtan başla
+  }
+
+// Getter for currentTrack
+  dynamic get currentTrack => state.currentTrack;
+
+  void playNextTrack() async {
+    print("Mevcut şarkı: ${_musicList[_currentTrackIndex]['title']}");
+    print("Stream URL: ${_musicList[_currentTrackIndex]['stream_url']}");
+    print(_currentTrackIndex);
+    if (_musicList.isNotEmpty && _currentTrackIndex + 1 < _musicList.length) {
+      _currentTrackIndex++;
+      await playMusic(_musicList[_currentTrackIndex]);
+    } else {
+      print("Son şarkıya ulaşıldı.");
+    }
+  }
+
+  void playPreviousTrack() async {
+    if (_musicList.isNotEmpty && _currentTrackIndex - 1 >= 0) {
+      _currentTrackIndex--;
+      await playMusic(_musicList[_currentTrackIndex]);
+    } else {
+      print("İlk şarkıya ulaşıldı.");
+    }
+  }
 
   @override
   void dispose() {
     _player.stop();
     _player.dispose();
     super.dispose();
-    
   }
 
   Future<void> seek(Duration position) async {
@@ -101,9 +133,8 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
   }
 }
 
-
-
 // Creating a provider for PlayerNotifier
-final playerProvider = StateNotifierProvider<PlayerNotifier, PlayerState>((ref) {
+final playerProvider =
+    StateNotifierProvider<PlayerNotifier, PlayerState>((ref) {
   return PlayerNotifier();
 });

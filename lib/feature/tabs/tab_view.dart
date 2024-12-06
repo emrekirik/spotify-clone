@@ -103,14 +103,19 @@ class _TabViewState extends ConsumerState<TabView> {
                       currentTab = TabItem.profile;
                     });
                   },
-                  child: CircleAvatar(
-                    backgroundImage: currentUser?.photoURL != null
-                        ? NetworkImage(currentUser!.photoURL!)
-                        : null,
-                    child: currentUser?.photoURL == null
-                        ? const Icon(Icons.person)
-                        : null,
-                  ),
+                  child: currentUser?.photoURL != null &&
+                          currentUser!.photoURL!.isNotEmpty
+                      ? ClipOval(
+                          child: Image.network(
+                            currentUser!.photoURL!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.person,
+                                  size: 40, color: Colors.white);
+                            },
+                          ),
+                        )
+                      : const Icon(Icons.person, size: 40, color: Colors.white),
                 ),
               ),
               actions: [

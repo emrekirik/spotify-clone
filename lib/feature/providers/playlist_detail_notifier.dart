@@ -43,7 +43,7 @@ class PlaylistDetailNotifier extends StateNotifier<PlaylistDetailState> {
 
       final playlist = playlistData;
       final tracks = playlistData['tracks']['items']
-          .where((item) => item['track']['preview_url'] != null)
+          // .where((item) => item['track']['preview_url'] != null)
           .toList();
 
       state = PlaylistDetailState(playlist: playlist, tracks: tracks);

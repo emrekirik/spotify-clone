@@ -7,15 +7,14 @@ import 'package:spotifyclone_app/feature/providers/player_notifier.dart';
 import 'package:spotifyclone_app/feature/playlists/playlist_add_bottom_sheet.dart';
 
 class MusicPage extends ConsumerWidget {
-  final dynamic music;
-
-  const MusicPage({required this.music, super.key});
+  const MusicPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playerState = ref.watch(playerProvider);
     final playerNotifier = ref.read(playerProvider.notifier);
     final sizeWidth = MediaQuery.sizeOf(context).width;
+    final music = playerState.currentTrack;
 
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +31,7 @@ class MusicPage extends ConsumerWidget {
           },
         ),
         title: Text(
-          music['album']['name'],
+          music['title'],
           style: const TextStyle(color: Colors.white),
           overflow: TextOverflow.ellipsis,
         ),
@@ -85,7 +84,7 @@ class MusicPage extends ConsumerWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(20.0), // Yuvarlatma miktarı
               child: Image.network(
-                music['album']['images'][0]['url'],
+                music['artwork'],
                 fit: BoxFit.cover,
                 width: sizeWidth * 0.85,
               ),
@@ -101,7 +100,7 @@ class MusicPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      music['name'],
+                      music['title'],
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -109,7 +108,7 @@ class MusicPage extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      music['artists'][0]['name'],
+                      music['artist'],
                       style:
                           const TextStyle(color: Colors.white70, fontSize: 20),
                     ),
@@ -148,7 +147,9 @@ class MusicPage extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    playerNotifier.playPreviousTrack();
+                  },
                   icon: const Icon(
                     Icons.skip_previous,
                     color: Colors.white,
@@ -182,7 +183,9 @@ class MusicPage extends ConsumerWidget {
                   width: 10,
                 ),
                 IconButton(
-                  onPressed: () async {},
+                  onPressed: () async {
+                    playerNotifier.playNextTrack();
+                  },
                   icon: const Icon(
                     Icons.skip_next,
                     color: Colors.white,

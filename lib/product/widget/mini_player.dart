@@ -39,7 +39,7 @@ class MiniPlayer extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Image.network(
-                      music['album']['images'][0]['url'],
+                      music['artwork'],
                       fit: BoxFit.cover,
                       width: 50,
                       height: 50,
@@ -53,7 +53,7 @@ class MiniPlayer extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              music['name'],
+                              music['title'],
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -61,7 +61,7 @@ class MiniPlayer extends ConsumerWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              music['artists'][0]['name'],
+                              music['artist'],
                               style: const TextStyle(
                                   color: Colors.white70, fontSize: 12),
                             )
@@ -96,7 +96,7 @@ class MiniPlayer extends ConsumerWidget {
 PageRouteBuilder musicPageRoute(dynamic music) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => MusicPage(
-      music: music,
+    
     ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(0.0, 1.0);

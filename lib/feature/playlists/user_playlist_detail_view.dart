@@ -19,7 +19,8 @@ class UserPlaylistDetailView extends ConsumerStatefulWidget {
       _UserPlaylistDetailViewState();
 }
 
-class _UserPlaylistDetailViewState extends ConsumerState<UserPlaylistDetailView> {
+class _UserPlaylistDetailViewState
+    extends ConsumerState<UserPlaylistDetailView> {
   Map<String, dynamic>? _playlist;
   List<dynamic>? _tracks;
 
@@ -168,16 +169,20 @@ class _UserPlaylistDetailViewState extends ConsumerState<UserPlaylistDetailView>
                                   Expanded(
                                     child: FloatingActionButton(
                                       onPressed: () {
-                                        if (_tracks != null &&
-                                            _tracks!.isNotEmpty) {
-                                          ref
-                                              .read(playerProvider.notifier)
-                                              .playMusic(_tracks![0]);
-                                        }
+                                        // if (_tracks != null &&
+                                        //     _tracks!.isNotEmpty) {
+                                        //   ref
+                                        //       .read(playerProvider.notifier)
+                                        //       .playMusic(_tracks![0]);
+                                        // }
                                       },
-                                      backgroundColor: HexColor(spotifyGreenColor),
+                                      backgroundColor:
+                                          HexColor(spotifyGreenColor),
                                       shape: const CircleBorder(),
-                                      child: const Icon(Icons.play_arrow, color: Colors.black,),
+                                      child: const Icon(
+                                        Icons.play_arrow,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -192,10 +197,14 @@ class _UserPlaylistDetailViewState extends ConsumerState<UserPlaylistDetailView>
                           itemBuilder: (context, index) {
                             final track = _tracks![index];
                             return MusicItem(
-                                musicTitle: track['name'],
-                                artist: track['artists'][0]['name'],
+                                musicTitle: track['is_audius'] == true
+                                    ? track['title']
+                                    : track['name'],
+                                artist:track['is_audius'] == true ? track['artist']: track['artists'][0]['name'],
                                 music: _tracks![index],
-                                imageUrl: track['album']['images'][0]['url']);
+                                imageUrl: track['is_audius'] == true
+                                    ? track['artwork']
+                                    : track['album']['images'][0]['url']);
                           },
                         ),
                       ),

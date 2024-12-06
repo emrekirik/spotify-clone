@@ -125,10 +125,10 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                                   Expanded(
                                     child: FloatingActionButton(
                                       onPressed: () {
-                                        ref
-                                            .read(playerProvider.notifier)
-                                            .playMusic(playlistState.tracks[0]
-                                                ['track']);
+                                        // ref
+                                        //     .read(playerProvider.notifier)
+                                        //     .playMusic(playlistState.tracks[0]
+                                        //         ['track']);
                                       },
                                       backgroundColor: HexColor(spotifyGreenColor),
                                       shape: const CircleBorder(),
@@ -151,7 +151,7 @@ class _PlaylistDetailViewState extends ConsumerState<PlaylistDetailView> {
                             final track = playlistState.tracks[index]['track'];
                             return MusicItem(
                                 musicTitle: track['name'],
-                                artist: track['artists'][0]['name'],
+                                artist: track['artists'][0]['name'] ?? '',
                                 music: track,
                                 imageUrl: track['album']['images'][0]['url']);
                           },
